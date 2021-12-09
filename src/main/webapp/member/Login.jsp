@@ -13,6 +13,36 @@
     </style>
 </head> 
 <body>
+	<!-- 
+		request영역에 해당 속성이 있는지 확인하여 속성이 있다면
+		에러메세지를 출력한다.
+		해당 속성은 로그인 실패처리 시 request영역에 저장하게 된다
+	 -->
+	<span style="color: red; font-size: 1.2em;">
+		<%=  request.getAttribute("LoginErrMsg") == null ?
+				"" : request.getAttribute("LoginErrMsg") %>
+	</span>
+	<%
+		//로그인 확인
+		if (session.getAttribute("UserId") == null) {
+			//만약 session영역에 저장된 속성이 없다면 로그인 이전의 상태이므로
+			//로그인 폼을 화면에 출력한다.
+	%>
+	<script>
+		function validateForm(form) {
+			if (!form.user_id.value) {
+				alert("아이디를 입력하세요.");
+				form.user_id.focus();
+				return false;
+			}
+			if (!form.user_pw.value) {
+				alert("패스워드를 입력하세요.");
+				form.user_pw.focus();
+				return false;	
+			}
+		}
+	</script>
+
 <fieldset>
     <table border="0" cellpadding="40" cellspacing="0" width="100%">
         <tr>
@@ -22,7 +52,8 @@
                         <td align="center"><img src="./images/login_logo.gif" /></td>
                     </tr>
                 </table>
-                <form name="myform" action="" method="post">
+                <form action="LoginProcess.jsp" method="post" name="LoginFrm"
+					onsubmit="return validateForm(this);">
                 <table width="470" border="0" cellpadding="0" cellspacing="0">
                     <tr>
                         <td width="350">
@@ -54,6 +85,14 @@
                     </tr>
                 </table>
                 </form>
+                <%
+					} else {
+				%>
+					<%= session.getAttribute("UserName") %> 회원님, 로그인하셨습니다. <br />
+					<a href="Logout.jsp">[로그아웃]</a>
+				<%
+					}
+				%>
                 <div style="margin-top:30px;"></div>
             </td>
         </tr>

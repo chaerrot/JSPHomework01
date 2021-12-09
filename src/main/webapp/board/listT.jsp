@@ -1,14 +1,35 @@
+<%@page import="model1.board.BoardDTO"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="model1.board.BoardDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ include file="./commons/header.jsp" %>
+<%
+BoardDAO dao = new BoardDAO(application);
+
+Map<String, Object> param = new HashMap<String, Object>();
+
+String searchField = request.getParameter("searchField");
+String searchWord = request.getParameter("searchWord");
+
+if (searchWord != null) {
+   param.put("searchField", searchField); //검색필드명(title, content 등)
+   param.put("searchWord", searchWord); //검색어
+}
+int totalCount = dao.selectCount(param);
+List<BoardDTO> boardLists = dao.selectList(param);
+dao.close();
+%>
 <body>
 <div class="container">
     <!-- Top영역 -->
-    <%@ include file= "./commons/top.jsp" %>
+    <%@ include file="./commons/top.jsp" %>
     <!-- Body영역 -->
     <div class="row">
         <!-- Left메뉴영역 -->
-        <%@ include file= "./commons/left.jsp" %>
+        <%@ include file="./commons/left.jsp" %>
         <!-- Contents영역 -->
         <div class="col-9 pt-3">
             <h3>게시판 목록 - <small>자유게시판</small></h3>
@@ -16,12 +37,12 @@
             <div class="row">
                 <form action="">
                     <div class="input-group ms-auto" style="width: 400px;">
-                        <select name="" class="form-control">
-                            <option value="">제목</option>
-                            <option value="">내용</option>
-                            <option value="">작성자</option>
+                        <select name="searchField" class="form-control">
+                            <option value="title">제목</option>
+                            <option value="content">내용</option>
+                            <option value="id">작성자</option>
                         </select>
-                        <input type="text" class="form-control" placeholder="Search" style="width: 200px;">
+                        <input type="text" name="searchWord" class="form-control" placeholder="Search" style="width: 200px;">
                         <button class="btn btn-success" type="submit">
                             <i class="bi-search" style="font-size: 1rem; color: white;"></i>
                         </button>
@@ -42,39 +63,33 @@
                     </tr>
                 </thead>
                 <tbody>
-
+                <%
+                if(boardLists.isEmpty()){
+                %>
+                   <tr>
+                      <td colspan="6" align="center">
+                         등록된 게시물이 없습니다.
+                      </td>
+                   </tr>
+            <%
+                }
+            else{
+               int virtualNum  = 0;
+               for(BoardDTO dto : boardLists){
+                  virtualNum  = totalCount--;
+            %>
                     <tr class="text-center">
-                        <td>100</td>
-                        <td class="text-start"><a href="./viewT.jsp">자유게시판 많은 이용 부탁드려요</a></td>
-                        <td>낙자쌤</td>
-                        <td>21-11-25</td>
-                        <td>88</td>
+                        <td><%= virtualNum  %></td>
+                        <td class="text-start"><a href="./viewT.jsp?num=<%= dto.getNum() %>"><%= dto.getTitle() %></a></td>
+                        <td><%= dto.getId() %></td>
+                        <td><%= dto.getPostdate() %></td>
+                        <td><%= dto.getVisitcount() %></td>
                         <td><i class="bi-pin-angle-fill" style="font-size: 1rem;"></i></td>
                     </tr>
-                    <tr class="text-center">
-                        <td>100</td>
-                        <td class="text-start"><a href="./viewT.jsp">자유게시판 많은 이용 부탁드려요</a></td>
-                        <td>낙자쌤</td>
-                        <td>21-11-25</td>
-                        <td>88</td>
-                        <td><i class="bi-pin-angle-fill" style="font-size: 1rem;"></i></td>
-                    </tr>
-                    <tr class="text-center">
-                        <td>100</td>
-                        <td class="text-start"><a href="./viewT.jsp">자유게시판 많은 이용 부탁드려요</a></td>
-                        <td>낙자쌤</td>
-                        <td>21-11-25</td>
-                        <td>88</td>
-                        <td><i class="bi-pin-angle-fill" style="font-size: 1rem;"></i></td>
-                    </tr>
-                    <tr class="text-center">
-                        <td>100</td>
-                        <td class="text-start"><a href="./viewT.jsp">자유게시판 많은 이용 부탁드려요</a></td>
-                        <td>낙자쌤</td>
-                        <td>21-11-25</td>
-                        <td>88</td>
-                        <td><i class="bi-pin-angle-fill" style="font-size: 1rem;"></i></td>
-                    </tr>                    
+                <%
+               }
+            }
+                %>                      
                     
                 </tbody>
                 </table>
@@ -83,7 +98,7 @@
             <div class="row">
                 <div class="col d-flex justify-content-end">
                     <button type="button" class="btn btn-primary" onclick="location.href='writeT.jsp';">글쓰기</button>
-                    <button type="button" class="btn btn-secondary">수정하기</button>
+                    <button type="button" class="btn btn-secondary" onclick="location.href='Edit.jsp';">수정하기</button>
                     <button type="button" class="btn btn-success">삭제하기</button>
                     <button type="button" class="btn btn-info">답글쓰기</button>
                     <button type="button" class="btn btn-warning">목록보기</button>
@@ -116,7 +131,7 @@
         </div>
     </div>
     <!-- Copyright영역 -->
-    <%@ include file = "./commons/copyright.jsp" %>
+    <%@ include file="./commons/copyright.jsp" %>
 </div>
 </body>
 </html>
