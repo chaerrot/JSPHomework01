@@ -21,22 +21,22 @@
                     <col width="*"/>
                 </colgroup>
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <th class="text-center" 
                             style="vertical-align:middle;">작성자</th>
                         <td>
                             <input type="text" class="form-control" 
                                 style="width:100px;" />
                         </td>
-                    </tr>
-                    <tr>
+                    </tr> -->
+                    <!-- <tr>
                         <th class="text-center" 
                             style="vertical-align:middle;">패스워드</th>
                         <td>
                             <input type="text" class="form-control" 
                                 style="width:200px;" />
                         </td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <th class="text-center" 
                             style="vertical-align:middle;">제목</th>
